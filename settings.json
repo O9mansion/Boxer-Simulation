@@ -1,0 +1,7 @@
+{
+    "Minimum thinking time": 14,
+    "Maximum thinking time": 15,
+    "Max boxer movement speed": 10,
+    "Boxer friction": 2,
+    "Simulations defult TPS": 20
+}
