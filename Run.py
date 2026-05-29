@@ -6,6 +6,7 @@ import Modules.EntityUpdater as EntityUpdater
 import Modules.EntityTicker as EntityTicker
 
 Ring.Setup()
+EntityUpdater.Setup()
 
 def Test():
     EntityUpdater.Test()

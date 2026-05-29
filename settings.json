@@ -3,5 +3,6 @@
     "Maximum thinking time": 15,
     "Max boxer movement speed": 10,
     "Boxer friction": 2,
+    "Boxer collition loss": 1.65,
     "Simulations defult TPS": 20
 }
