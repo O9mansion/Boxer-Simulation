@@ -173,44 +173,43 @@ def ResolveCollision(Boxer1, Boxer2, collision_data):
     if not collided:
         return
 
-    push_xu = math.cos(angle) * overlap
-    push_yu = -math.sin(angle) * overlap
+    normal_x = math.cos(angle)
+    normal_y = math.sin(angle)
 
-    push_xd = math.cos(angle + math.pi / 2) * overlap
-    push_yd = -math.sin(angle + math.pi / 2) * overlap
+    # Separate overlapping boxers
+    correction = overlap / 2
 
-    Boxer1_x, Boxer1_y = Boxer1.position
-    Boxer1_speed_x, Boxer1_speed_y = Boxer1.current_speed
-    Boxer2_x, Boxer2_y = Boxer2.position
-    Boxer2_speed_x, Boxer2_speed_y = Boxer2.current_speed
+    Boxer1.position[0] -= normal_x * correction
+    Boxer1.position[1] -= normal_y * correction
 
-    CollitionSpeedLoss = LoadSetting("Boxer collition loss")
+    Boxer2.position[0] += normal_x * correction
+    Boxer2.position[1] += normal_y * correction
 
-    combinde_speed = [(abs(Boxer1_speed_x)+abs(Boxer2_speed_x))/CollitionSpeedLoss,(abs(Boxer1_speed_y)+abs(Boxer2_speed_y))/CollitionSpeedLoss]
+    # Relative velocity
+    rel_vx = Boxer2.current_speed[0] - Boxer1.current_speed[0]
+    rel_vy = Boxer2.current_speed[1] - Boxer1.current_speed[1]
 
-    combinde_x, combinde_speed_y = combinde_speed
-    rebound_speed_x_u = math.cos(angle) * combinde_x
-    rebound_speed_y_u = -math.sin(angle) * combinde_speed_y
+    speed_along_normal = (
+        rel_vx * normal_x +
+        rel_vy * normal_y
+    )
 
-    rebound_speed_x_d = math.cos(angle + math.pi / 2) * combinde_x
-    rebound_speed_y_d = -math.sin(angle + math.pi / 2) * combinde_speed_y
+    # Already moving apart
+    if speed_along_normal > 0:
+        return
 
-        
-    if Boxer1_y < Boxer2_y:
-        Boxer1.position = [Boxer1_x+push_xd,Boxer1_y+push_yd]
-        Boxer2.position = [Boxer2_x+push_xu, Boxer2_y+push_yu]
+    restitution = 1 / LoadSetting("Boxer collition loss")
 
-        Boxer1.rotate_body_parts()
-        Boxer2.rotate_body_parts()
+    impulse = -(1 + restitution) * speed_along_normal / 2
 
-        Boxer1.current_speed = [rebound_speed_x_d/2,rebound_speed_y_d/2]
-        Boxer2.current_speed = [rebound_speed_x_u/2,rebound_speed_y_u/2]
-    else:
-        Boxer1.position = [Boxer1_x+push_xu, Boxer1_y+push_yu]
-        Boxer2.position = [Boxer2_x+push_xd,Boxer2_y+push_yd]
+    impulse_x = impulse * normal_x
+    impulse_y = impulse * normal_y
 
-        Boxer1.rotate_body_parts()
-        Boxer2.rotate_body_parts()
+    Boxer1.current_speed[0] -= impulse_x
+    Boxer1.current_speed[1] -= impulse_y
 
-        Boxer1.current_speed = [rebound_speed_x_u/2,rebound_speed_y_u/2]
-        Boxer2.current_speed = [rebound_speed_x_d/2,rebound_speed_y_d/2]
+    Boxer2.current_speed[0] += impulse_x
+    Boxer2.current_speed[1] += impulse_y
+
+    Boxer1.rotate_body_parts()
+    Boxer2.rotate_body_parts()

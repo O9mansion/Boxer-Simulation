@@ -1,6 +1,6 @@
 {
     "Minimum thinking time": 14,
-    "Maximum thinking time": 15,
+    "Maximum thinking time": 35,
     "Max boxer movement speed": 10,
     "Boxer friction": 2,
     "Boxer collition loss": 1.65,
