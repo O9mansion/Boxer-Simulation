@@ -3,7 +3,7 @@ Train your very own boxers and watch them fight against each other!
 
 ## Insparation
 Based off a youtube video made by Simulife Hub go watch the vid!
-https://www.youtube.com/watch?v=a7e2wCYIeOI&t=482s
+https://www.youtube.com/watch?v=a7e2wCYIeOI
 
 ## Usage
 For now this is still in development so usage is as of now run, Run.py. There are some settings to play arround with in settings.json.
