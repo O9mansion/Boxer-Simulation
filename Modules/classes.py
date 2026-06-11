@@ -85,7 +85,7 @@ class Memory:
 
 @dataclass
 class Hand:
-    state: str
+    state: Optional[str] = "Idle"
     swing_dis: Optional[float] = 0.0
     swing_speed: Optional[float] = 0.0
 
@@ -106,6 +106,10 @@ class Boxer:
 
     right_hand: Optional[Hand] = None
     left_hand: Optional[Hand] = None
+    max_puntching_distance: Optional[int] = None
+    puntching_ierations : Optional[int] = None
+    puntching_distance_growth_factor: Optional[int] = None
+    puntching_returning_speed: Optional[int] = None
 
     memory: Optional[Memory] = None
 
@@ -126,6 +130,7 @@ class Boxer:
     head_radius: Optional[float] = None
 
     current_executing_action_group: Optional[ActionGroup] = None
+    current_executing_action_group_new_points: Optional[int] = None
 
     position: Optional[List[float]] = field(
         default_factory=lambda: [0.0, 0.0]
@@ -134,13 +139,15 @@ class Boxer:
         default_factory=lambda: [0.0, 0.0]
     )
 
-    rotation: Optional[float] = 0.0
+    rotation: Optional[float] = 0
 
     current_speed: Optional[List[float]] = field(
         default_factory=lambda: [0.0, 0.0]
     )
     max_speed: Optional[float] = 0.0
-    friction: Optional[float] = 0.0
+    current_rotation_speed: Optional[float] = 0
+    max_rotation_speed: Optional[float] = 0
+    friction: Optional[float] = 0
 
     def tick(self):
         if self.ticks_to_next_action <= 0:
@@ -165,6 +172,7 @@ class Boxer:
                 self.state = "Action"
         
         self.update_postion()
+        self.update_hands()
 
     def rotate_body_parts(self):
         x, y = self.position
@@ -178,16 +186,17 @@ class Boxer:
         self.head_position = [x+dx, y+dy]
 
         #Hands
-        forward_distance = 50
+        forward_distance_r = 50 + self.right_hand.swing_dis
+        foward_distance_l = 50 + self.left_hand.swing_dis
         side_distance = 50
 
         forward_rad = math.radians(self.rotation)
         right_rad = math.radians(self.rotation + 90)
 
-        fxr = math.sin(forward_rad) * forward_distance + self.right_hand.swing_dis
-        fyr = -math.cos(forward_rad) * forward_distance + self.right_hand.swing_dis
-        fxl = math.sin(forward_rad) * forward_distance + self.left_hand.swing_dis 
-        fyl = -math.cos(forward_rad) * forward_distance + self.left_hand.swing_dis
+        fxr = math.sin(forward_rad) * forward_distance_r
+        fyr = -math.cos(forward_rad) * forward_distance_r
+        fxl = math.sin(forward_rad) * foward_distance_l 
+        fyl = -math.cos(forward_rad) * foward_distance_l
 
         rx = math.sin(right_rad) * side_distance
         ry = -math.cos(right_rad) * side_distance
@@ -233,7 +242,61 @@ class Boxer:
         self.current_speed = [speed_x,speed_y]
         x, y = self.position
         self.position = [x+speed_x,y+speed_y]
+
+        if self.rotation + self.current_rotation_speed > 360:
+            self.rotation += self.current_rotation_speed - 360
+        elif self.rotation + self.current_rotation_speed < 0:
+            self.rotation += self.current_rotation_speed + 360
+        elif self.rotation == 360:
+            self.rotation = 0
+        else:
+            self.rotation += self.current_rotation_speed
+
+        if self.current_rotation_speed > -1.5 and self.current_rotation_speed < 1.5:
+            self.current_rotation_speed = 0
+        elif self.current_rotation_speed > 0:
+            self.current_rotation_speed -= self.friction
+        else:
+            self.current_rotation_speed += self.friction
+
         self.rotate_body_parts()
+
+    def update_hands(self):
+        #Left hand
+        if self.left_hand.state == "Swinging":
+            if self.left_hand.swing_dis == 0:
+                distance = self.max_puntching_distance * (self.puntching_distance_growth_factor - 1) / (self.puntching_distance_growth_factor**self.puntching_ierations - 1)
+                self.left_hand.swing_dis = distance
+            else:
+                distance = self.left_hand.swing_dis * self.puntching_distance_growth_factor
+                self.left_hand.swing_dis = distance
+                
+            if self.left_hand.swing_dis >= self.max_puntching_distance:
+                self.left_hand.swing_dis = self.max_puntching_distance
+                self.left_hand.state = "Returning"
+        if self.left_hand.state == "Returning":
+            self.left_hand.swing_dis -= self.puntching_returning_speed
+            if self.left_hand.swing_dis <= 0:
+                self.left_hand.swing_dis = 0
+                self.left_hand.state = "Idle"
+
+        #Right hand
+        if self.right_hand.state == "Swinging":
+            if self.right_hand.swing_dis == 0:
+                distance = self.max_puntching_distance * (self.puntching_distance_growth_factor - 1) / (self.puntching_distance_growth_factor**self.puntching_ierations - 1)
+                self.right_hand.swing_dis = distance
+            else:
+                distance = self.right_hand.swing_dis * self.puntching_distance_growth_factor
+                self.right_hand.swing_dis = distance
+                
+            if self.right_hand.swing_dis >= self.max_puntching_distance:
+                self.right_hand.swing_dis = self.max_puntching_distance
+                self.right_hand.state = "Returning"
+        if self.right_hand.state == "Returning":
+            self.right_hand.swing_dis -= self.puntching_returning_speed
+            if self.right_hand.swing_dis <= 0:
+                self.right_hand.swing_dis = 0
+                self.right_hand.state = "Idle"
 
     def move(self, distance:float):
         rotation_rad = math.radians(self.rotation)
@@ -260,17 +323,11 @@ class Boxer:
         self.current_speed = [speed_x,speed_y]
         
     def rotate(self, amount: float):
-
-        if self.rotation + amount > 360:
-            self.rotation += amount - 360
-        elif self.rotation + amount < 0:
-            self.rotation += amount + 360
-        elif self.rotation == 360:
-            self.rotation = 0
-        else:
-            self.rotation += amount
-        
-        self.rotate_body_parts()
+        self.current_rotation_speed += amount
+        if self.current_rotation_speed > self.max_rotation_speed:
+            self.current_rotation_speed = self.max_rotation_speed
+        elif self.current_rotation_speed < -self.max_rotation_speed:
+            self.current_rotation_speed = -self.max_rotation_speed
 
     def drain_stamina(self, amount: float):
 
@@ -321,3 +378,15 @@ class Boxer:
                 else:
                     self.available_mental_clearness += amount/4
                     self.active_mental_clearness = self.available_mental_clearness
+
+    def puntch(self, hand):
+        if hand == "R":
+            hand = self.right_hand
+        elif hand == "L":
+            hand = self.left_hand
+        else:
+            print("Not a valid value for hand")
+            return
+        
+        if hand.state == "Idle":
+            hand.state = "Swinging"

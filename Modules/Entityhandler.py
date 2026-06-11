@@ -28,7 +28,12 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.body_radius = 50
     NewBoxer.hands_radius = 13
     NewBoxer.max_speed = ReuseFunctions.LoadSetting("Max boxer movement speed")
+    NewBoxer.max_rotation_speed = ReuseFunctions.LoadSetting("Max boxer rotation speed")
     NewBoxer.friction = ReuseFunctions.LoadSetting("Boxer friction")
+    NewBoxer.max_puntching_distance = ReuseFunctions.LoadSetting("Max puntching distance")
+    NewBoxer.puntching_ierations = ReuseFunctions.LoadSetting("Puntching iterations")
+    NewBoxer.puntching_distance_growth_factor = ReuseFunctions.LoadSetting("Puntching growth factor")
+    NewBoxer.puntching_returning_speed = ReuseFunctions.LoadSetting("Puntching return speed")
 
     x, y = Position
 
