@@ -2,6 +2,7 @@
 Train your very own boxers and watch them fight against each other!
 
 [![Run tests](https://github.com/O9mansion/Boxer-Simulation/actions/workflows/python-tests.yml/badge.svg)](https://github.com/O9mansion/Boxer-Simulation/actions/workflows/python-tests.yml)
+Might be some issues....
 
 ## Insparation
 Based off a youtube video made by Simulife Hub go watch the vid!
