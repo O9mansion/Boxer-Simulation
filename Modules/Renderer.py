@@ -20,6 +20,72 @@ def StartingCondidtions(WorldSize):
 
     canvas.pack()
 
+def DrawCustomScaleBar(
+    canvas,
+    sub_bar: bool,
+    max_bar_value: float,
+    current_bar_value: float,
+    current_sub_bar_value: float,
+    position: tuple[int, int],
+    size: tuple[int, int],
+    sub_bar_color: str,
+    main_bar_color: str,
+    background_color: str,
+    border_color: str,
+    border_size: int = 2,
+):
+    x, y = position
+    width, height = size
+
+    # Center horizontally
+    x -= width / 2
+
+    max_bar_value = max(max_bar_value, 1)
+
+    main_ratio = max(0.0, min(current_bar_value / max_bar_value, 1.0))
+    sub_ratio = max(0.0, min(current_sub_bar_value / max_bar_value, 1.0))
+
+    # Border
+    canvas.create_rectangle(
+        x - border_size,
+        y - border_size,
+        x + width + border_size,
+        y + height + border_size,
+        fill=border_color,
+        outline=""
+    )
+
+    # Background
+    canvas.create_rectangle(
+        x,
+        y,
+        x + width,
+        y + height,
+        fill=background_color,
+        outline=""
+    )
+
+    # Sub bar
+    if sub_bar:
+        canvas.create_rectangle(
+            x,
+            y,
+            x + width * sub_ratio,
+            y + height,
+            fill=sub_bar_color,
+            outline=""
+        )
+
+    # Main bar (always on top)
+    canvas.create_rectangle(
+        x,
+        y,
+        x + width * main_ratio,
+        y + height,
+        fill=main_bar_color,
+        outline=""
+    )
+
 def DrawBoxer(Boxer: Classes.Boxer):
     global canvas
 
@@ -95,7 +161,20 @@ def DrawBoxer(Boxer: Classes.Boxer):
         width=2
     )
 
-
+    Healthbar = DrawCustomScaleBar(
+        canvas=canvas,
+        sub_bar=True,
+        max_bar_value=Boxer.max_stamina,
+        current_bar_value=Boxer.active_stamina,
+        current_sub_bar_value=Boxer.available_stamina,
+        background_color="#2E2E2E",
+        main_bar_color="#5EF235",
+        sub_bar_color="#155717",
+        position=[Boxer.head_position[0],Boxer.head_position[1]],
+        size=[40,5],
+        border_size=2,
+        border_color="#2A3527"
+    )
 
 def Update():
     global canvas

@@ -8,6 +8,6 @@
     "Simulations defult TPS": 20,
     "Max puntching distance": 75,
     "Puntching iterations": 5,
-    "Puntching growth factor": 1.5,
+    "Puntching growth factor": 2,
     "Puntching return speed": 5
 }

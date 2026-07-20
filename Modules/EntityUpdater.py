@@ -65,6 +65,22 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
             Boxer1.hands_radius,
             Boxer2.position,
             Boxer2.body_radius
+        ),
+
+        #Right hand of boxer 1 to right hand of boxer 2
+        ReuseFunctions.CirclesCollitionCheck(
+            Boxer1.right_hand.position,
+            Boxer1.hands_radius,
+            Boxer2.right_hand.position,
+            Boxer2.hands_radius
+        ),
+
+        #Right hand of boxer 1 to left hand of boxer 2
+        ReuseFunctions.CirclesCollitionCheck(
+            Boxer1.right_hand.position,
+            Boxer1.hands_radius,
+            Boxer2.left_hand.position,
+            Boxer2.hands_radius
         )
     ]
     Boxer1LeftCheck = [
@@ -83,10 +99,26 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
             Boxer1.hands_radius,
             Boxer2.position,
             Boxer2.body_radius
+        ),
+
+        #Right hand of boxer 1 to right hand of boxer 2
+        ReuseFunctions.CirclesCollitionCheck(
+            Boxer1.left_hand.position,
+            Boxer1.hands_radius,
+            Boxer2.right_hand.position,
+            Boxer2.hands_radius
+        ),
+
+        #Right hand of boxer 1 to left hand of boxer 2
+        ReuseFunctions.CirclesCollitionCheck(
+            Boxer1.left_hand.position,
+            Boxer1.hands_radius,
+            Boxer2.left_hand.position,
+            Boxer2.hands_radius
         )
     ]
     Boxer2RightCheck = [
-        #Right hand of boxer 1 to head of boxer 2
+        #Right hand of boxer 2 to head of boxer 1
         ReuseFunctions.CirclesCollitionCheck(
             Boxer2.right_hand.position,
             Boxer2.hands_radius,
@@ -94,12 +126,28 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
             Boxer1.head_radius
         ),
 
-        #Right hand of boxer 1 to body of boxer 2
+        #Right hand of boxer 2 to body of boxer 1
         ReuseFunctions.CirclesCollitionCheck(
             Boxer2.right_hand.position,
             Boxer2.hands_radius,
             Boxer1.position,
             Boxer1.body_radius
+        ),
+
+        #Right hand of boxer 2 to right hand of boxer 1
+        ReuseFunctions.CirclesCollitionCheck(
+            Boxer2.right_hand.position,
+            Boxer2.hands_radius,
+            Boxer1.right_hand.position,
+            Boxer1.hands_radius
+        ),
+
+        #Right hand of boxer 2 to left hand of boxer 1
+        ReuseFunctions.CirclesCollitionCheck(
+            Boxer2.right_hand.position,
+            Boxer2.hands_radius,
+            Boxer1.left_hand.position,
+            Boxer1.hands_radius
         )
     ]
     Boxer2LeftCheck = [
@@ -121,7 +169,7 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
         )
     ]
 
-    
+
     
 
 # NOW WE GOTTA DO PHYSICS AAAAAAAAAAAAAAAAAAAAAAAAAA I'm so cooked....

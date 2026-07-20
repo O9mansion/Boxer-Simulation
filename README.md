@@ -1,12 +1,23 @@
 # Boxer-Simulation
 Train your very own boxers and watch them fight against each other!
 
+[![Run tests](https://github.com/<OWNER>/<REPO>/actions/workflows/python-tests.yml/badge.svg)](https://github.com/<OWNER>/<REPO>/actions/workflows/python-tests.yml)
+
+Replace `<OWNER>` and `<REPO>` in the badge URL with your GitHub username and repository name.
+
 ## Insparation
 Based off a youtube video made by Simulife Hub go watch the vid!
 https://www.youtube.com/watch?v=a7e2wCYIeOI
 
 ## Usage
 For now this is still in development so usage is as of now run, Run.py. There are some settings to play arround with in settings.json.
+
+## Running tests
+Local quick run (virtualenv recommended):
+```
+python3 -m pip install -r requirements.txt
+pytest -q
+```
 
 ## Roadmap
 The plan for this is to make a robus AI boxing simulation with hopes to add a way to fight your own boxers yourself. As for now it's to get it as faithfull to the video as possible before adding more to it.

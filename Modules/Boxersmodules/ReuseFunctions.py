@@ -225,24 +225,11 @@ def ResolveCollision(Boxer1, Boxer2, collision_data):
 def AngleAndDirectionBetweenTwoAngles(Ang1,Ang2):
     pass
 
-def ResolveHandColition(Hand: Hand, collision_data, AffectedBoxer: Boxer, Where: str):
-    collided, overlap, angle = collision_data
+def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer):
+    Case1 = Collitions[0] #Head
+    Case2 = Collitions[1] #Body
+    Case3 = Collitions[2] #Lhand
+    Case4 = Collitions[3] #Rhand
 
-    if not collided:
-        return
-
-    # Where will be Lhand, Rhand, Body, Head
-    if Where == "Rhand":
-        pass
-    elif Where == "Lhand":
-        pass
-    elif Where == "Head":
-        pass
-    elif Where == "Body":
-        pass
-    else:
-        raise("Invalid affector string")
-    
-    
     
     
