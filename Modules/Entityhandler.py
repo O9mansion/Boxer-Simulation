@@ -1,8 +1,16 @@
-from .classes import Boxer, Memory, Hand
+from .classes import Boxer, Memory, Hand, previous_ring_state
 from .Boxersmodules import ReuseFunctions
 import math
 
 Entitys = []
+
+PreviousState = previous_ring_state()
+
+def Update():
+    global PreviousState, Entitys
+
+    PreviousState.Update(Entitys[0], Entitys[1])
+
 
 def CreateBoxer(Position, Rotation):
     global Entitys

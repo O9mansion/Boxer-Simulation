@@ -1,13 +1,13 @@
 {
     "Minimum thinking time": 14,
     "Maximum thinking time": 35,
-    "Max boxer movement speed": 10,
+    "Max boxer movement speed": 15,
     "Max boxer rotation speed" : 15,
     "Boxer friction": 2,
     "Boxer collition loss": 1.65,
     "Simulations defult TPS": 20,
-    "Max puntching distance": 50,
-    "Puntching iterations": 8,
+    "Max puntching distance": 75,
+    "Puntching iterations": 5,
     "Puntching growth factor": 1.5,
     "Puntching return speed": 5
 }

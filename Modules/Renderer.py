@@ -26,7 +26,6 @@ def DrawBoxer(Boxer: Classes.Boxer):
     x, y = Boxer.position
 
     body_radius = Boxer.body_radius
-
     body_left = x - body_radius
     body_top = y - body_radius
     body_right = x + body_radius

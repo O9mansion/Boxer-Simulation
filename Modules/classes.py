@@ -82,7 +82,6 @@ class Memory:
                         LowestPoints = index
             self.stimulation_action_pairs.pop(LowestPoints)
             
-
 @dataclass
 class Hand:
     state: Optional[str] = "Idle"
@@ -94,7 +93,6 @@ class Hand:
     )
 
     owner_id: str = "default"
-
 
 #Now this is the REAL BOXER!!!!! he has memory, Stamina and MentalClearness both Active and Avalible
 #Avalible will be like the Max untill Hit where it will go down, Active will always regen to the Avalible level quickly but once it reaches Avalible it pushes Active and Avalible back up to max at a slower rate.
@@ -390,3 +388,46 @@ class Boxer:
         
         if hand.state == "Idle":
             hand.state = "Swinging"
+
+@dataclass
+class previous_ring_state:
+    # boxer 1
+    boxer_1_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    boxer_1_head_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    boxer_1_right_hand_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    boxer_1_left_hand_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+
+    #boxer 2
+    boxer_2_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    boxer_2_head_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    boxer_2_right_hand_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    boxer_2_left_hand_position: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+
+    def Update(self, Boxer1: Boxer, Boxer2: Boxer):
+        self.boxer_1_position = Boxer1.position
+        self.boxer_1_head_position = Boxer1.head_position
+        self.boxer_1_right_hand_position = Boxer1.right_hand.position
+        self.boxer_1_left_hand_position = Boxer1.left_hand.position
+
+        self.boxer_2_position = Boxer2.position
+        self.boxer_2_head_position = Boxer2.head_position
+        self.boxer_2_right_hand_position = Boxer2.right_hand.position
+        self.boxer_2_left_hand_position = Boxer2.left_hand.position
+
+        

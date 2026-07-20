@@ -9,7 +9,7 @@ Ring.Setup()
 EntityUpdater.Setup()
 
 def Test():
-    EntityUpdater.Test("Rotation And Moving")
+    EntityUpdater.Test("Puntching")
 
 def StartTicking():
     EntityTicker.Start()

@@ -1,6 +1,6 @@
 import random
 import math
-from ..classes import ActionGroup, Stimulation, Memory
+from ..classes import ActionGroup, Stimulation, Memory, Hand, previous_ring_state, Boxer
 import json
 
 def LoadSetting(setting):
@@ -86,14 +86,14 @@ def FlipRotaion(Ang):
 def ReturnedFlippedSituation(Sitiuation: Stimulation):
     NewStimulation = Stimulation()
 
-    NewStimulation.angle_to_opponent = FlipRotaion(Stimulation.angle_to_opponent)
-    NewStimulation.angle_to_ring_center = FlipRotaion(Stimulation.angle_to_ring_center)
-    NewStimulation.relative_opponent_angle = FlipRotaion(Stimulation.relative_opponent_angle)
-    NewStimulation.opponent_rotation_speed = Stimulation.opponent_rotation_speed
-    NewStimulation.closing_speed = Stimulation.closing_speed
-    NewStimulation.distance_to_opponent = Stimulation.distance_to_opponent
-    NewStimulation.distance_to_ring_center = Stimulation.distance_to_ring_center
-    NewStimulation.self_rotation_speed= Stimulation.self_rotation_speed
+    NewStimulation.angle_to_opponent = FlipRotaion(Sitiuation.angle_to_opponent)
+    NewStimulation.angle_to_ring_center = FlipRotaion(Sitiuation.angle_to_ring_center)
+    NewStimulation.relative_opponent_angle = FlipRotaion(Sitiuation.relative_opponent_angle)
+    NewStimulation.opponent_rotation_speed = Sitiuation.opponent_rotation_speed
+    NewStimulation.closing_speed = Sitiuation.closing_speed
+    NewStimulation.distance_to_opponent = Sitiuation.distance_to_opponent
+    NewStimulation.distance_to_ring_center = Sitiuation.distance_to_ring_center
+    NewStimulation.self_rotation_speed = Sitiuation.self_rotation_speed
 
     NewStimulation.flipped = True
 
@@ -143,6 +143,14 @@ def ReturnBestSituationBasedOnStimuli(Stim: Stimulation, Mem: Memory):
             LowestValue = [Index,Diff,Item.flipped]
 
     return LowestValue
+
+def DistanceCheckCircles(pos1, radius1, pos2, radius2):
+    dx = pos2[0] - pos1[0]
+    dy = pos2[1] - pos1[1]
+
+    distance = math.sqrt(dx * dx + dy * dy)
+
+    return distance
 
 def CirclesCollitionCheck(pos1, radius1, pos2, radius2):
     dx = pos2[0] - pos1[0]
@@ -213,3 +221,28 @@ def ResolveCollision(Boxer1, Boxer2, collision_data):
 
     Boxer1.rotate_body_parts()
     Boxer2.rotate_body_parts()
+
+def AngleAndDirectionBetweenTwoAngles(Ang1,Ang2):
+    pass
+
+def ResolveHandColition(Hand: Hand, collision_data, AffectedBoxer: Boxer, Where: str):
+    collided, overlap, angle = collision_data
+
+    if not collided:
+        return
+
+    # Where will be Lhand, Rhand, Body, Head
+    if Where == "Rhand":
+        pass
+    elif Where == "Lhand":
+        pass
+    elif Where == "Head":
+        pass
+    elif Where == "Body":
+        pass
+    else:
+        raise("Invalid affector string")
+    
+    
+    
+    

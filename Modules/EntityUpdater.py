@@ -1,4 +1,4 @@
-from .Entityhandler import Entitys
+from .Entityhandler import Entitys, previous_ring_state
 from .Boxersmodules import ReuseFunctions
 import time
 from .classes import Boxer
@@ -122,6 +122,7 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
     ]
 
     
+    
 
 # NOW WE GOTTA DO PHYSICS AAAAAAAAAAAAAAAAAAAAAAAAAA I'm so cooked....
 def Tick():
@@ -150,5 +151,5 @@ def Test(TestType):
         for l in range(0,10):
             for index, Entity in enumerate(Entitys):
                 Entity.move(10)
-                Entity.rotate(-15)
+                Entity.rotate(-5)
             time.sleep(0.2)
