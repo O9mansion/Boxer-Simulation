@@ -161,6 +161,7 @@ def DrawBoxer(Boxer: Classes.Boxer):
         width=2
     )
 
+    #Healthbar to desplay the stamina
     Healthbar = DrawCustomScaleBar(
         canvas=canvas,
         sub_bar=True,
@@ -170,10 +171,38 @@ def DrawBoxer(Boxer: Classes.Boxer):
         background_color="#2E2E2E",
         main_bar_color="#5EF235",
         sub_bar_color="#155717",
-        position=[Boxer.head_position[0],Boxer.head_position[1]],
+        position=[Boxer.head_position[0],Boxer.head_position[1]-10],
         size=[40,5],
-        border_size=2,
-        border_color="#2A3527"
+        border_size=1,
+        border_color="#464643"
+    )
+
+    #Cool little decor
+    Scale = 2
+    canvas.create_oval(
+        Boxer.head_position[0]-Scale,
+        Boxer.head_position[1]+Scale,
+        Boxer.head_position[0]+Scale,
+        Boxer.head_position[1]-Scale,
+        fill="#7e7e78",
+        outline="#7e7e78",
+        width=2
+    )
+
+    #Mental Clearness
+    MentalClearnessBar = DrawCustomScaleBar(
+        canvas=canvas,
+        sub_bar=True,
+        max_bar_value=Boxer.max_mental_clearness,
+        current_bar_value=Boxer.active_mental_clearness,
+        current_sub_bar_value=Boxer.available_mental_clearness,
+        background_color="#2E2E2E",
+        main_bar_color="#35E9F2",
+        sub_bar_color="#154357",
+        position=[Boxer.head_position[0],Boxer.head_position[1]+10],
+        size=[40,5],
+        border_size=1,
+        border_color="#464643"
     )
 
 def Update():

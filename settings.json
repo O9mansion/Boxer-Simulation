@@ -9,5 +9,9 @@
     "Max puntching distance": 75,
     "Puntching iterations": 5,
     "Puntching growth factor": 2,
-    "Puntching return speed": 5
+    "Puntching return speed": 5,
+    "Boxer puntching stamina cost" : 15,
+    "Boxer stamina recover" : 0.7,
+    "Boxer mental clearness recover" : 0.5
+
 }

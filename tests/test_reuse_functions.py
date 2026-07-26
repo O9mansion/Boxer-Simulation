@@ -9,7 +9,7 @@ def test_flip_rotation():
 
 
 def test_distance_check():
-    assert RF.DistanceCheckCircles([0, 0], 0, [3, 4], 0) == 5
+    assert RF.DistanceCheckCircles([0, 0], [3, 4]) == 5
 
 
 def test_circles_collision_no_overlap():

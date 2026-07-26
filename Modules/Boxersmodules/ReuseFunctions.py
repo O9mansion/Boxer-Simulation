@@ -144,7 +144,7 @@ def ReturnBestSituationBasedOnStimuli(Stim: Stimulation, Mem: Memory):
 
     return LowestValue
 
-def DistanceCheckCircles(pos1, radius1, pos2, radius2):
+def DistanceCheckCircles(pos1, pos2):
     dx = pos2[0] - pos1[0]
     dy = pos2[1] - pos1[1]
 
@@ -225,11 +225,20 @@ def ResolveCollision(Boxer1, Boxer2, collision_data):
 def AngleAndDirectionBetweenTwoAngles(Ang1,Ang2):
     pass
 
-def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer):
+def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer, PreviousPosition, CurrentPosition):
+    #Collide[0], Overlap[1], Angle[0]
     Case1 = Collitions[0] #Head
     Case2 = Collitions[1] #Body
     Case3 = Collitions[2] #Lhand
     Case4 = Collitions[3] #Rhand
+
+    if Case1[0]:
+        Hand.state = "Returning"
+        #calculate damage:
+        damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) + DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
+        
+
+    
 
     
     

@@ -42,6 +42,9 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.puntching_ierations = ReuseFunctions.LoadSetting("Puntching iterations")
     NewBoxer.puntching_distance_growth_factor = ReuseFunctions.LoadSetting("Puntching growth factor")
     NewBoxer.puntching_returning_speed = ReuseFunctions.LoadSetting("Puntching return speed")
+    NewBoxer.puntch_stamina_drain = ReuseFunctions.LoadSetting("Boxer puntching stamina cost")
+    NewBoxer.stamina_recover_speed = ReuseFunctions.LoadSetting("Boxer stamina recover")
+    NewBoxer.mental_clearness_recover_speed = ReuseFunctions.LoadSetting("Boxer mental clearness recover")
 
     x, y = Position
 

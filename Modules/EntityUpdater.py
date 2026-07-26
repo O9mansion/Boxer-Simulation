@@ -1,4 +1,4 @@
-from .Entityhandler import Entitys, previous_ring_state
+from .Entityhandler import Entitys, PreviousState
 from .Boxersmodules import ReuseFunctions
 import time
 from .classes import Boxer
@@ -169,6 +169,7 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
         )
     ]
 
+    ReuseFunctions.ResolveHandColition(Boxer1.right_hand, Boxer1RightCheck, Boxer2, PreviousState.boxer_1_right_hand_position, Boxer1.right_hand.position)
 
     
 

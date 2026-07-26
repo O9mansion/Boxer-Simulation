@@ -146,8 +146,12 @@ class Boxer:
     current_rotation_speed: Optional[float] = 0
     max_rotation_speed: Optional[float] = 0
     friction: Optional[float] = 0
+    puntch_stamina_drain: Optional[float] = 0
+    stamina_recover_speed: Optional[float] = 0
+    mental_clearness_recover_speed: Optional[float] = 0
 
     def tick(self):
+        #See if boxer needs to act
         if self.ticks_to_next_action <= 0:
             clarity_ratio = (
                 self.active_mental_clearness / self.max_mental_clearness
@@ -168,6 +172,14 @@ class Boxer:
                 self.ticks_to_next_action -= 1
             else:
                 self.state = "Action"
+
+        #Check if boxer is dead.
+        if self.available_mental_clearness <=1 or self.available_stamina <=1:
+            self.state = "PassedOut"
+
+        #Recover some stamina and mental clearness
+        self.recover_mental(self.mental_clearness_recover_speed)
+        self.recover_stamina(self.stamina_recover_speed)
         
         self.update_postion()
         self.update_hands()
@@ -340,17 +352,17 @@ class Boxer:
 
     def recover_stamina(self, amount: float):
 
-        if self.active_stamina < self.available_stamina:
+        
 
-            self.active_stamina += amount
+        self.active_stamina += amount
 
-            if self.active_stamina > self.available_stamina:
-                if self.available_stamina > self.max_stamina:
-                    self.available_stamina = self.max_stamina
-                    self.active_stamina = self.available_stamina
-                else:
-                    self.available_stamina += amount/4
-                    self.active_stamina = self.available_stamina
+        if self.active_stamina >= self.available_stamina:
+            if self.available_stamina > self.max_stamina:
+                self.available_stamina = self.max_stamina
+                self.active_stamina = self.available_stamina
+            else:
+                self.available_stamina += amount/4
+                self.active_stamina = self.available_stamina
 
     def drain_mental(self, amount: float):
 
@@ -388,6 +400,7 @@ class Boxer:
         
         if hand.state == "Idle":
             hand.state = "Swinging"
+            self.drain_stamina(self.puntch_stamina_drain)
 
 @dataclass
 class previous_ring_state:
