@@ -63,6 +63,7 @@ class StimulationActionPair:
 @dataclass
 class Memory:
     max_action_memory: int
+    active_actions: Optional[int] = 0
 
     stimulation_action_pairs: List[StimulationActionPair] = field(
         default_factory=list
@@ -152,19 +153,7 @@ class Boxer:
 
     def tick(self):
         
-
-        #See if boxer needs to act
-        if self.ticks_to_next_action <= 0:
-            clarity_ratio = (
-                self.active_mental_clearness / self.max_mental_clearness
-                if self.max_mental_clearness > 0
-                else 1.0
-            )
-
-            additional_ticks = round((1.0 - clarity_ratio) * 23)
-
-            self.ticks_to_next_action += 14 + additional_ticks
-        elif self.state == "Fighting":
+        if self.state == "Fighting":
             if self.ticks_to_next_action <= 4:
                 self.ticks_to_next_action = 4
             else:
@@ -172,7 +161,7 @@ class Boxer:
         else:
             if self.ticks_to_next_action > 0:
                 self.ticks_to_next_action -= 1
-            else:
+            elif self.ticks_to_next_action <= 0 and self.state != "PassedOut":
                 self.state = "Action"
 
         #Check if boxer is dead.
@@ -310,8 +299,24 @@ class Boxer:
                 self.right_hand.swing_dis = 0
                 self.right_hand.state = "Idle"
 
-    def move(self, distance:float):
-        rotation_rad = math.radians(self.rotation)
+    def move(self, distance:float, Direction):
+        #Figure out the direction first
+        AddedRot = 0
+        if Direction == "F":
+            AddedRot = 0
+        elif Direction == "B":
+            AddedRot = 180
+        elif Direction == "R":
+            AddedRot = 90
+        elif Direction == "L":
+            AddedRot = -90
+        else:
+            print("Not a valid direction!")
+
+
+        NewRotation = (self.rotation + AddedRot) % 360
+
+        rotation_rad = math.radians(NewRotation)
         dx = math.sin(rotation_rad) * distance
         dy = -math.cos(rotation_rad) * distance
 

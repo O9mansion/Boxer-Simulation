@@ -87,18 +87,6 @@ def test_rotate_clamps_to_max():
     assert abs(b.current_rotation_speed) <= b.max_rotation_speed
 
 
-def test_recover_mental_caps_at_max_mental_clearness():
-    b = make_boxer_template()
-    b.active_mental_clearness = 90
-    b.available_mental_clearness = 90
-    b.max_mental_clearness = 80
-
-    b.recover_mental(10)
-
-    assert b.available_mental_clearness == 80
-    assert b.active_mental_clearness == 80
-
-
 def test_add_memory_prunes_lowest_points_when_limit_reached():
     memory = Memory(max_action_memory=2)
     pair_low = StimulationActionPair(

@@ -36,7 +36,6 @@ def MakeObjectID():
     currentID += 1
     return PastID
 
-
 def GenerateRandActonGroup():
         #For rotation they can only rotate between 1-8 Same for movement, while puntching is just L or R
         RotList = []
@@ -174,6 +173,10 @@ def AngleBetween(pos1, pos2):
 
     return angle
 
+def DiffranceBetweenAngles(ang1, ang2):
+    Diff = ang1 - ang2
+    return Diff
+
 def ResolveCollision(Boxer1, Boxer2, collision_data):
 
     collided, overlap, angle = collision_data
@@ -240,7 +243,36 @@ def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer, PreviousPo
             AffectedBoxer.drain_mental(damage/2)
             AffectedBoxer.state == "Knocked"
 
-    
+def CreateStimulation(Boxer:Boxer, Opponante:Boxer, BoxerPreviousPosition, OpponantePreviousPosition):
+    WorldCenter = [LoadSetting("Screen Size X"),LoadSetting("Screen Size Y")]
+    AngleToRingCenter = AngleBetween(Boxer.position, WorldCenter)
+    DistanceToRingCenter = DistanceCheckCircles(Boxer.position, WorldCenter)
+
+    AngleToOpponante = AngleBetween(Boxer.position, Opponante.position)
+    DistanceToOpponante = DistanceCheckCircles(Boxer.position, Opponante.position)
+    RelitiveOpponanteAngle = DiffranceBetweenAngles(AngleBetween(Boxer.position, Opponante.position), Opponante.rotation)
+
+    SelfRotationSpeed = Boxer.current_rotation_speed
+    OpponanteRotationSpeed = Opponante.current_rotation_speed
+
+    ClosingSpeed = (DistanceCheckCircles(BoxerPreviousPosition,OpponantePreviousPosition)-DistanceCheckCircles(Boxer.position, Opponante.position))
+    Flipped = False
+
+    NewStimulation = Stimulation(
+        angle_to_ring_center=AngleToRingCenter,
+        distance_to_ring_center=DistanceToRingCenter,
+        angle_to_opponent=AngleToOpponante,
+        distance_to_opponent=DistanceToOpponante,
+        relative_opponent_angle=RelitiveOpponanteAngle,
+        self_rotation_speed=SelfRotationSpeed,
+        opponent_rotation_speed=OpponanteRotationSpeed,
+        closing_speed=ClosingSpeed,
+        flipped=Flipped
+    )
+
+    return NewStimulation
+
+
 
     
     

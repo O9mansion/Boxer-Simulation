@@ -26,7 +26,7 @@ def Play():
     Paused = False
 
 def Start():
-    global CurrentTPS, TimePerTick
+    global CurrentTPS, TimePerTick, next_tick
     Update()
 
     while not StopEvent.is_set():

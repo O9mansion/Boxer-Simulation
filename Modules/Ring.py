@@ -1,6 +1,6 @@
 import random
 import Modules.classes as Classes
-from classes import Boxer, Memory
+from Modules.classes import Boxer, Memory
 import Modules.Boxersmodules.ReuseFunctions as ReuseFunctions
 import Modules.Entityhandler as EntityHandler
 import Modules.EntityTicker as EntityTicker

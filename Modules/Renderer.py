@@ -8,6 +8,9 @@ root = None
 canvas = None
 running = False
 
+XSize, YSize = [0,0]
+Persentage = 105
+
 
 def StartingCondidtions(WorldSize):
     global root, canvas, running
@@ -214,7 +217,7 @@ def DrawBoxer(Boxer: Classes.Boxer):
     )
 
 def Update():
-    global canvas, running
+    global canvas, running, Persentage
 
     if not running or canvas is None:
         return
@@ -223,11 +226,19 @@ def Update():
     canvas.delete("all")
 
     # Draw arena
+    X2Part = (XSize/Persentage) * 100
+    X1Diff = XSize - X2Part
+    X1Part = X1Diff
+
+    Y2Part = (YSize/Persentage) * 100
+    Y1Diff = YSize - Y2Part
+    Y1Part = Y1Diff
+
     canvas.create_oval(
-        50,
-        50,
-        750,
-        750,
+        X1Part,
+        Y1Part,
+        X2Part,
+        Y2Part,
         fill="#434d5f",
         outline="#636d80",
         width=5
@@ -241,6 +252,8 @@ def Update():
     root.after(16, Update)  # ~60 FPS
 
 def Start(WorldSize, duration_ms=None):
+    global root, XSize, YSize
+    XSize, YSize = WorldSize
     StartingCondidtions(WorldSize)
 
     if duration_ms is not None:
@@ -249,7 +262,6 @@ def Start(WorldSize, duration_ms=None):
     Update()
 
     root.mainloop()
-
 
 def RunScene(WorldSize, frames=20, step_fn=None, delay_seconds=0.03):
     StartingCondidtions(WorldSize)
@@ -269,7 +281,6 @@ def RunScene(WorldSize, frames=20, step_fn=None, delay_seconds=0.03):
                 time.sleep(delay_seconds)
     finally:
         Stop()
-
 
 def Stop():
     global running, root, canvas
