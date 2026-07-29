@@ -4,7 +4,7 @@ import time
 from .classes import Boxer
 import math
 
-#NOW WE GET TO DO THE FUN STUFF! PHYSICS AND THE BRAIN LOOP OR WHATEVER! this is gunna be horrible AAAAAAAAAAAAAAAAAAAAAAA
+# Return the base thinking time for the Ai's
 def Setup():
     for Entity in Entitys:
         Entity.ticks_to_next_action = ReuseFunctions.ReturnThinkingTime(Entity.max_mental_clearness,Entity.active_mental_clearness)
@@ -171,15 +171,21 @@ def CheckForHandCollitions(Boxer1: Boxer, Boxer2: Boxer):
 
     ReuseFunctions.ResolveHandColition(Boxer1.right_hand, Boxer1RightCheck, Boxer2, PreviousState.boxer_1_right_hand_position, Boxer1.right_hand.position)
 
-    
+def UpdateAIStates(Boxer: Boxer):
+    if Boxer.state == "Knocked":
+        pass
 
 # NOW WE GOTTA DO PHYSICS AAAAAAAAAAAAAAAAAAAAAAAAAA I'm so cooked....
 def Tick():
+    #Check to see if any body parts are intersecting, discluding the hands.
     CheckForCollitions(Entitys[0], Entitys[1])
 
-    # Hey... That was easy ish enough!
     #Now we need to check the hands and if they intersect with any of the boxers based on state.... AAAAAAAA
     CheckForHandCollitions(Entitys[0], Entitys[1])
+
+    #Update the AI's States
+    UpdateAIStates(Entitys[0]) #Boxer1
+    UpdateAIStates(Entitys[1]) #Boxer2
 
 def Test(TestType):
     Setup()
@@ -195,6 +201,22 @@ def Test(TestType):
                 Entity.puntch("R")
                 Entity.puntch("L")
             time.sleep(1)
+
+    elif TestType == "HeadBodyHand":
+        boxer_one = Entitys[0]
+        boxer_two = Entitys[1]
+
+        for _ in range(3):
+            boxer_one.move(12)
+            time.sleep(0.2)
+            boxer_one.move(12)
+            time.sleep(0.2)
+            boxer_one.move(12)
+
+            boxer_one.puntch("R")
+
+            boxer_one.puntch("L")
+            time.sleep(2)
     
     elif TestType == "Rotation And Moving":
         for l in range(0,10):

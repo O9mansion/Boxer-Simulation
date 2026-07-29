@@ -11,7 +11,6 @@ def Update():
 
     PreviousState.Update(Entitys[0], Entitys[1])
 
-
 def CreateBoxer(Position, Rotation):
     global Entitys
 
@@ -94,3 +93,7 @@ def CreateBoxer(Position, Rotation):
     Entitys.append(NewBoxer)
 
     return NewBoxer.boxer_id
+
+def RemoveBoxer(Boxer):
+    position = Entitys.index(Boxer)
+    Entitys.pop(position)

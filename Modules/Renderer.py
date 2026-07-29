@@ -2,14 +2,22 @@ import tkinter as tk
 import Modules.classes as Classes
 import Modules.Entityhandler as EntityHandler
 import math
+import time
 
-root = tk.Tk()
+root = None
 canvas = None
+running = False
 
-root.title("Simulation")
 
 def StartingCondidtions(WorldSize):
-    global canvas
+    global root, canvas, running
+
+    if root is not None and root.winfo_exists():
+        root.destroy()
+
+    root = tk.Tk()
+    root.title("Simulation")
+    running = True
 
     canvas = tk.Canvas(
         root,
@@ -206,7 +214,10 @@ def DrawBoxer(Boxer: Classes.Boxer):
     )
 
 def Update():
-    global canvas
+    global canvas, running
+
+    if not running or canvas is None:
+        return
 
     # Clear previous frame
     canvas.delete("all")
@@ -229,9 +240,54 @@ def Update():
     # Schedule next frame
     root.after(16, Update)  # ~60 FPS
 
-def Start(WorldSize):
+def Start(WorldSize, duration_ms=None):
     StartingCondidtions(WorldSize)
+
+    if duration_ms is not None:
+        root.after(duration_ms, Stop)
 
     Update()
 
     root.mainloop()
+
+
+def RunScene(WorldSize, frames=20, step_fn=None, delay_seconds=0.03):
+    StartingCondidtions(WorldSize)
+
+    try:
+        for _ in range(frames):
+            if step_fn is not None:
+                step_fn()
+
+            Update()
+
+            if root is not None:
+                root.update_idletasks()
+                root.update()
+
+            if delay_seconds > 0:
+                time.sleep(delay_seconds)
+    finally:
+        Stop()
+
+
+def Stop():
+    global running, root, canvas
+
+    running = False
+
+    if canvas is not None:
+        try:
+            canvas.delete("all")
+        except tk.TclError:
+            pass
+
+    if root is not None and root.winfo_exists():
+        try:
+            root.quit()
+            root.destroy()
+        except tk.TclError:
+            pass
+
+    canvas = None
+    root = None

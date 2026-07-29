@@ -15,7 +15,7 @@ def StartTicking():
     EntityTicker.Start()
 
 t1 = threading.Thread(target=Test)
-t1.start()
+#t1.start()
 
 t2 = threading.Thread(target=StartTicking)
 t2.start()

@@ -1,4 +1,9 @@
 from Modules import Entityhandler
+import Modules.EntityUpdater as EntityUpdater
+import Modules.EntityTicker as EntityTicker
+import threading
+import time
+from Modules import Renderer
 
 
 def test_create_boxers_and_entitys_list():

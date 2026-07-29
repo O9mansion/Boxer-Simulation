@@ -233,10 +233,12 @@ def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer, PreviousPo
     Case4 = Collitions[3] #Rhand
 
     if Case1[0]:
-        Hand.state = "Returning"
-        #calculate damage:
-        damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) + DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
-        
+        if Hand.state == "Swinging":
+            Hand.state = "Returning"
+            #calculate damage:
+            damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) + DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
+            AffectedBoxer.drain_mental(damage/2)
+            AffectedBoxer.state == "Knocked"
 
     
 

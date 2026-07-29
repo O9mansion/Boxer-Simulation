@@ -379,20 +379,17 @@ class Boxer:
 
     def recover_mental(self, amount: float):
 
+        
+
         self.active_mental_clearness += amount
 
         if self.active_mental_clearness > self.available_mental_clearness:
-            if self.available_mental_clearness > self.max_mental_clearness:
-                self.available_mental_clearness = self.max_mental_clearness
+            if self.available_mental_clearness > self.max_stamina:
+                self.available_mental_clearness = self.max_stamina
                 self.active_mental_clearness = self.available_mental_clearness
             else:
-                self.available_mental_clearness += amount / 4
+                self.available_mental_clearness += amount/4
                 self.active_mental_clearness = self.available_mental_clearness
-
-        if self.available_mental_clearness > self.max_mental_clearness:
-            self.available_mental_clearness = self.max_mental_clearness
-        if self.active_mental_clearness > self.max_mental_clearness:
-            self.active_mental_clearness = self.max_mental_clearness
 
     def puntch(self, hand):
         if hand == "R":

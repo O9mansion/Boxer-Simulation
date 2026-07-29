@@ -7,21 +7,41 @@ from .EntityUpdater import Tick
 CurrentTPS = ReuseFunctions.LoadSetting("Simulations defult TPS")
 print(CurrentTPS)
 TimePerTick = 1.0 / CurrentTPS
+next_tick = time.perf_counter()
 
 StopEvent = threading.Event()
+Paused = False
 
 def UpdateTPS(TPS):
     global CurrentTPS, TimePerTick
     CurrentTPS = TPS
     TimePerTick = 1.0 / CurrentTPS
 
+def Pause():
+    global Paused
+    Paused = True
+
+def Play():
+    global Paused
+    Paused = False
+
 def Start():
     global CurrentTPS, TimePerTick
     Update()
+
     while not StopEvent.is_set():
-        for Entity in Entitys:
-            Entity.tick()
-        
+        if Paused:
+            time.sleep(sleep_time)
+            continue
+
+        next_tick += TimePerTick
+
+        for entity in Entitys:
+            entity.tick()
+
         Tick()
         Update()
-        time.sleep(TimePerTick)
+
+        sleep_time = next_tick - time.perf_counter()
+        if sleep_time > 0:
+            time.sleep(sleep_time)
