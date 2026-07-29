@@ -151,6 +151,8 @@ class Boxer:
     mental_clearness_recover_speed: Optional[float] = 0
 
     def tick(self):
+        
+
         #See if boxer needs to act
         if self.ticks_to_next_action <= 0:
             clarity_ratio = (
@@ -377,17 +379,20 @@ class Boxer:
 
     def recover_mental(self, amount: float):
 
-        if self.active_mental_clearness < self.available_mental_clearness:
+        self.active_mental_clearness += amount
 
-            self.active_mental_clearness += amount
+        if self.active_mental_clearness > self.available_mental_clearness:
+            if self.available_mental_clearness > self.max_mental_clearness:
+                self.available_mental_clearness = self.max_mental_clearness
+                self.active_mental_clearness = self.available_mental_clearness
+            else:
+                self.available_mental_clearness += amount / 4
+                self.active_mental_clearness = self.available_mental_clearness
 
-            if self.active_mental_clearness > self.available_mental_clearness:
-                if self.available_mental_clearness > self.max_stamina:
-                    self.available_mental_clearness = self.max_stamina
-                    self.active_mental_clearness = self.available_mental_clearness
-                else:
-                    self.available_mental_clearness += amount/4
-                    self.active_mental_clearness = self.available_mental_clearness
+        if self.available_mental_clearness > self.max_mental_clearness:
+            self.available_mental_clearness = self.max_mental_clearness
+        if self.active_mental_clearness > self.max_mental_clearness:
+            self.active_mental_clearness = self.max_mental_clearness
 
     def puntch(self, hand):
         if hand == "R":

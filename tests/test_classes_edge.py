@@ -1,4 +1,11 @@
-from Modules.classes import Boxer, Hand
+from Modules.classes import (
+    ActionGroup,
+    Boxer,
+    Hand,
+    Memory,
+    Stimulation,
+    StimulationActionPair,
+)
 
 
 def make_boxer_template():
@@ -78,3 +85,41 @@ def test_rotate_clamps_to_max():
     b.current_rotation_speed = 0
     b.rotate(100)
     assert abs(b.current_rotation_speed) <= b.max_rotation_speed
+
+
+def test_recover_mental_caps_at_max_mental_clearness():
+    b = make_boxer_template()
+    b.active_mental_clearness = 90
+    b.available_mental_clearness = 90
+    b.max_mental_clearness = 80
+
+    b.recover_mental(10)
+
+    assert b.available_mental_clearness == 80
+    assert b.active_mental_clearness == 80
+
+
+def test_add_memory_prunes_lowest_points_when_limit_reached():
+    memory = Memory(max_action_memory=2)
+    pair_low = StimulationActionPair(
+        stimulation=Stimulation(),
+        action=ActionGroup(),
+        points=1.0,
+    )
+    pair_mid = StimulationActionPair(
+        stimulation=Stimulation(),
+        action=ActionGroup(),
+        points=2.0,
+    )
+    pair_high = StimulationActionPair(
+        stimulation=Stimulation(),
+        action=ActionGroup(),
+        points=3.0,
+    )
+
+    memory.add_memory(pair_low)
+    memory.add_memory(pair_mid)
+    memory.add_memory(pair_high)
+
+    assert len(memory.stimulation_action_pairs) == 2
+    assert {pair.points for pair in memory.stimulation_action_pairs} == {2.0, 3.0}
