@@ -20,7 +20,7 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.rotation = Rotation
     NewBoxer.boxer_id = ReuseFunctions.MakeObjectID()
 
-    NewBoxer.memory = Memory(max_action_memory=6)
+    NewBoxer.memory = Memory(max_action_memory=16)
 
     NewBoxer.max_mental_clearness = 100
     NewBoxer.max_stamina = 100
@@ -44,6 +44,10 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.puntch_stamina_drain = ReuseFunctions.LoadSetting("Boxer puntching stamina cost")
     NewBoxer.stamina_recover_speed = ReuseFunctions.LoadSetting("Boxer stamina recover")
     NewBoxer.mental_clearness_recover_speed = ReuseFunctions.LoadSetting("Boxer mental clearness recover")
+    NewBoxer.stimuli_to_stimuless_max_value = ReuseFunctions.LoadSetting("Stimuli to stimuless max value")
+    NewBoxer.boxer_mass = ReuseFunctions.LoadSetting("Boxer mass")
+    NewBoxer.moment_of_inertia = ReuseFunctions.LoadSetting("Boxers moment of inertia")
+    NewBoxer.hand_air_time = ReuseFunctions.LoadSetting("Hand air time")
 
     x, y = Position
 
@@ -56,6 +60,7 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.head_position = [x+dx, y+dy]
 
     #Hands
+    hand_mass = ReuseFunctions.LoadSetting("Hand mass")
     forward_distance = 50
     side_distance = 50
 
@@ -81,13 +86,15 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.left_hand = Hand(
         position=left_hand_position,
         owner_id=NewBoxer.boxer_id,
-        state="Idle"
+        state="Idle",
+        mass=hand_mass
     )
 
     NewBoxer.right_hand = Hand(
         position=right_hand_position,
         owner_id=NewBoxer.boxer_id,
-        state="Idle"
+        state="Idle",
+        mass=hand_mass
     )
 
     Entitys.append(NewBoxer)
@@ -95,5 +102,12 @@ def CreateBoxer(Position, Rotation):
     return NewBoxer.boxer_id
 
 def RemoveBoxer(Boxer):
+    if Boxer is None:
+        return False
+
+    if Boxer not in Entitys:
+        return False
+
     position = Entitys.index(Boxer)
     Entitys.pop(position)
+    return True

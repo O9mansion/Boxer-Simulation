@@ -6,28 +6,35 @@ import Modules.EntityUpdater as EntityUpdater
 import Modules.EntityTicker as EntityTicker
 import Modules.Boxersmodules.ReuseFunctions as ReuseFunctions
 
-Ring.Setup()
-EntityUpdater.Setup()
 
-def Test():
-    EntityUpdater.Test("Movement")
+def main():
+    Ring.Setup()
+    EntityUpdater.Setup()
 
-def StartTicking():
-    EntityTicker.Start()
+    def Test():
+        EntityUpdater.Test("HeadBodyHand")
 
-t1 = threading.Thread(target=Test)
-t1.start()
+    def StartTicking():
+        EntityTicker.Start()
 
-t2 = threading.Thread(target=StartTicking)
-t2.start()
+    t1 = threading.Thread(target=Test)
+    #t1.start()
 
-ScreenX = ReuseFunctions.LoadSetting("Screen Size X")
-ScreenY = ReuseFunctions.LoadSetting("Screen Size Y")
+    t2 = threading.Thread(target=StartTicking)
+    t2.start()
 
-try:
-    Renderer.Start([ScreenX, ScreenY])
-finally:
-    EntityTicker.StopEvent.set()
-    t2.join
-    print("Shutdown")
+    ScreenX = ReuseFunctions.LoadSetting("Screen Size X")
+    ScreenY = ReuseFunctions.LoadSetting("Screen Size Y")
+
+    try:
+        Renderer.Start([ScreenX, ScreenY])
+    finally:
+        EntityTicker.StopEvent.set()
+        #t1.join()
+        t2.join()
+        print("Shutdown")
+
+
+if __name__ == "__main__":
+    main()
 

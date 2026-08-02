@@ -11,6 +11,10 @@ running = False
 XSize, YSize = [0,0]
 Persentage = 105
 
+def DrawStats(
+        
+):
+    pass
 
 def StartingCondidtions(WorldSize):
     global root, canvas, running

@@ -5,15 +5,20 @@
     "Max boxer rotation speed" : 15,
     "Boxer friction": 2,
     "Boxer collition loss": 1.65,
-    "Simulations defult TPS": 20,
+    "Simulations defult TPS": 400,
     "Max puntching distance": 75,
     "Puntching iterations": 5,
     "Puntching growth factor": 2,
     "Puntching return speed": 5,
     "Boxer puntching stamina cost" : 15,
-    "Boxer stamina recover" : 0.7,
+    "Boxer stamina recover" : 0.5,
     "Boxer mental clearness recover" : 0.5,
     "Boxer knock down penalty": 15,
     "Screen Size X": 800,
-    "Screen Size Y": 800
+    "Screen Size Y": 800,
+    "Stimuli to stimuless max value" : 20,
+    "Boxer mass" : 80,
+    "Boxers moment of inertia": 3000.0,
+    "Hand mass": 15,
+    "Hand air time" : 2
 }

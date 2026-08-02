@@ -53,6 +53,22 @@ def test_update_hands_initial_growth():
     assert b.right_hand.swing_dis > 0
 
 
+def test_swing_reaches_full_extension_in_configured_steps():
+    b = make_boxer()
+    b.max_puntching_distance = 75
+    b.puntching_ierations = 5
+    b.puntching_distance_growth_factor = 2
+    b.hand_air_time = 0
+    b.right_hand.state = "Swinging"
+    b.right_hand.swing_dis = 0
+
+    for _ in range(5):
+        b.update_hands()
+
+    assert b.right_hand.swing_dis == 75
+    assert b.right_hand.state == "Returning"
+
+
 def test_move_updates_speed():
     b = make_boxer()
     b.rotation = 0

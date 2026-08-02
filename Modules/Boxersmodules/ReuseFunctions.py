@@ -41,7 +41,9 @@ def GenerateRandActonGroup():
         RotList = []
         MoveList = []
         AttackList = []
-        
+
+        DefiniteMove = random.randint(1,6)
+
         for Position in range(6):
             RotationAct = 0
             RotationDirections = ["R","L"]
@@ -59,11 +61,14 @@ def GenerateRandActonGroup():
                 RotList.append([RotationDirections[randomRotDir],random.randint(1,8)])
             else:
                 RotList.append(0)
-                
-            if coinflipM == 1:
-                MoveList.append([MovementDirections[randomMoveDir],random.randint(1,8)])
-            else:
-                MoveList.append(0)
+
+            if Position == DefiniteMove:
+                MoveList.append([MovementDirections[randomMoveDir],random.randint(4,8)])
+            else:  
+                if coinflipM == 1:
+                    MoveList.append([MovementDirections[randomMoveDir],random.randint(1,8)])
+                else:
+                    MoveList.append(0)
                 
             if coinflipA == 1:
                 RandSide = random.randint(1,2)
@@ -73,6 +78,7 @@ def GenerateRandActonGroup():
                     AttackList.append("L")
             else:
                 AttackList.append("N")
+
                 
         return ActionGroup(RotList, MoveList, AttackList)
             
@@ -129,13 +135,13 @@ def ReturnBestSituationBasedOnStimuli(Stim: Stimulation, Mem: Memory):
     for Item in Mem.stimulation_action_pairs:
         Sitiuation = Item.stimulation
         ListOfSituation.append(Sitiuation)
-    
+
     #generate flipped Situation pairs(So ai wont need to store 2 diffent sitiations action pairs for the same thing just flipped!)
     for Item in Mem.stimulation_action_pairs:
         Sitiuation = Item.stimulation
         ListOfSituation.append(ReturnedFlippedSituation(Sitiuation))
-    
-    LowestValue = [None,1000]
+
+    LowestValue = [None,1000,False]
     for Index, Item in enumerate(ListOfSituation):
         Diff = CompareTwoStimulations(Stim, Item)
         if Diff < LowestValue[1]:
@@ -228,8 +234,44 @@ def ResolveCollision(Boxer1, Boxer2, collision_data):
 def AngleAndDirectionBetweenTwoAngles(Ang1,Ang2):
     pass
 
-def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer, PreviousPosition, CurrentPosition):
-    #Collide[0], Overlap[1], Angle[0]
+def ApplyImpulse(
+    AffectedBoxer: Boxer,
+    Hand: Hand
+):
+    #get the force at witch the hand is hitting at
+    impulse = [
+        Hand.hand_speed[0] * Hand.mass,
+        Hand.hand_speed[1] * Hand.mass
+    ]
+
+    #Deal some Knockback
+    AffectedBoxer.current_speed[0] += impulse[0] / AffectedBoxer.boxer_mass
+    AffectedBoxer.current_speed[1] += impulse[1] / AffectedBoxer.boxer_mass
+
+    #Now we need to get where the inpact happend relitive to the boxer
+    r = [
+        Hand.position[0] - AffectedBoxer.position[0],
+        Hand.position[1] - AffectedBoxer.position[1]
+    ]
+
+    torque = (
+        r[0] * impulse[1]
+        -
+        r[1] * impulse[0]
+    )
+
+    AffectedBoxer.current_rotation_speed += (
+        torque / AffectedBoxer.moment_of_inertia
+    )
+
+def ResolveHandColition(Hand: Hand, Boxer:Boxer, Collitions, AffectedBoxer: Boxer, PreviousPosition, CurrentPosition, HandPrevousPosition):
+    #Update hand's speed
+    Hand.hand_speed = [
+        Hand.position[0] - HandPrevousPosition[0],
+        Hand.position[1] - HandPrevousPosition[1]
+    ]
+
+    #Collide[0], Overlap[1], Angle[2]
     Case1 = Collitions[0] #Head
     Case2 = Collitions[1] #Body
     Case3 = Collitions[2] #Lhand
@@ -238,10 +280,127 @@ def ResolveHandColition(Hand: Hand, Collitions, AffectedBoxer: Boxer, PreviousPo
     if Case1[0]:
         if Hand.state == "Swinging":
             Hand.state = "Returning"
+            Hand.air_time = 0
+            Hand.swing_step = 0
+            Hand.swing_step_distance = 0.0
+
+
+            normal_x = math.cos(Case1[2])
+            normal_y = math.sin(Case1[2])
+            
+            # Separate overlapping boxers
+            correction = Case1[1]
+            
+            Hand.position[0] -= normal_x * correction
+            Hand.position[1] -= normal_y * correction
+
+            ApplyImpulse(
+                AffectedBoxer,
+                Hand
+            )
+            
             #calculate damage:
-            damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) + DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
+            damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
+            print(f"Previous Distance:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position)}, Distance:{DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}")
+            print(f" Hit detected, Swing Speed:{Hand.swing_speed}, Distance between last 2 ticks:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}, For damage:{damage/2}")
             AffectedBoxer.drain_mental(damage/2)
-            AffectedBoxer.state == "Knocked"
+            AffectedBoxer.state = "Knocked"
+            AffectedBoxer.current_executing_action_group_new_points -= Hand.swing_speed/2
+            Boxer.current_executing_action_group_new_points += Hand.swing_speed
+    elif Case2[0]:
+        if Hand.state == "Swinging":
+                    Hand.state = "Returning"
+                    Hand.air_time = 0
+                    Hand.swing_step = 0
+                    Hand.swing_step_distance = 0.0
+        
+        
+                    normal_x = math.cos(Case1[2])
+                    normal_y = math.sin(Case1[2])
+                    
+                    # Separate overlapping boxers
+                    correction = Case1[1]
+                    
+                    Hand.position[0] -= normal_x * correction
+                    Hand.position[1] -= normal_y * correction
+
+                    ApplyImpulse(
+                        AffectedBoxer,
+                        Hand
+                    )
+                    
+                    #calculate damage:
+                    damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
+                    print(f"Previous Distance:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position)}, Distance:{DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}")
+                    print(f" Hit detected, Swing Speed:{Hand.swing_speed}, Distance between last 2 ticks:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}, For damage:{damage/2}")
+                    AffectedBoxer.drain_stamina(damage/2)
+                    AffectedBoxer.state = "Knocked"
+                    AffectedBoxer.current_executing_action_group_new_points -= Hand.swing_speed/2
+                    Boxer.current_executing_action_group_new_points += Hand.swing_speed
+    elif Case3[0]:
+        if Hand.state == "Swinging":
+                    Hand.state = "Returning"
+                    Hand.air_time = 0
+                    Hand.swing_step = 0
+                    Hand.swing_step_distance = 0.0
+        
+        
+                    normal_x = math.cos(Case1[2])
+                    normal_y = math.sin(Case1[2])
+                    
+                    # Separate overlapping boxers
+                    correction = Case1[1]
+                    
+                    Hand.position[0] -= normal_x * correction
+                    Hand.position[1] -= normal_y * correction
+
+                    #To the other boxer
+                    ApplyImpulse(
+                        AffectedBoxer,
+                        Hand
+                    )
+
+                    ApplyImpulse(
+                        Boxer,
+                        Hand
+                    )
+
+                    if AffectedBoxer.left_hand.state == "Swinging":
+                        AffectedBoxer.left_hand.state = "Returning"
+                    elif AffectedBoxer.left_hand.state == "Idle":
+                        AffectedBoxer.current_executing_action_group_new_points += 5
+    elif Case4[0]:
+        if Hand.state == "Swinging":
+                    Hand.state = "Returning"
+                    Hand.air_time = 0
+                    Hand.swing_step = 0
+                    Hand.swing_step_distance = 0.0
+        
+        
+                    normal_x = math.cos(Case1[2])
+                    normal_y = math.sin(Case1[2])
+                    
+                    # Separate overlapping boxers
+                    correction = Case1[1]
+                    
+                    Hand.position[0] -= normal_x * correction
+                    Hand.position[1] -= normal_y * correction
+
+                    #To the other boxer
+                    ApplyImpulse(
+                        AffectedBoxer,
+                        Hand
+                    )
+
+                    ApplyImpulse(
+                        Boxer,
+                        Hand
+                    )
+
+                    if AffectedBoxer.right_hand.state == "Swinging":
+                        AffectedBoxer.right_hand.state = "Returning"
+                    elif AffectedBoxer.right_hand.state == "Idle":
+                        AffectedBoxer.current_executing_action_group_new_points += 5
 
 def CreateStimulation(Boxer:Boxer, Opponante:Boxer, BoxerPreviousPosition, OpponantePreviousPosition):
     WorldCenter = [LoadSetting("Screen Size X"),LoadSetting("Screen Size Y")]

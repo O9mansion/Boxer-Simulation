@@ -6,6 +6,7 @@ from Modules.classes import (
     Stimulation,
     StimulationActionPair,
 )
+from Modules.EntityUpdater import UpdateAIStates
 
 
 def make_boxer_template():
@@ -111,3 +112,30 @@ def test_add_memory_prunes_lowest_points_when_limit_reached():
 
     assert len(memory.stimulation_action_pairs) == 2
     assert {pair.points for pair in memory.stimulation_action_pairs} == {2.0, 3.0}
+
+
+def test_update_ai_states_uses_action_group_lists_without_crashing():
+    boxer = make_boxer_template()
+    boxer.state = "Action"
+    boxer.stimuli_to_stimuless_max_value = -1
+    boxer.memory = Memory(max_action_memory=4)
+    boxer.memory.add_memory(
+        StimulationActionPair(
+            stimulation=Stimulation(),
+            action=ActionGroup(
+                rotation=[["R", 1]],
+                movement=[["F", 1]],
+                attacking=["N"],
+            ),
+            points=10.0,
+        )
+    )
+    opponent = make_boxer_template()
+    opponent.position = [5.0, 0.0]
+
+    UpdateAIStates(boxer, opponent, [0.0, 0.0], [5.0, 0.0])
+    UpdateAIStates(boxer, opponent, [0.0, 0.0], [5.0, 0.0])
+
+    assert boxer.state == "Thinking"
+    assert isinstance(boxer.current_executing_action_group, ActionGroup)
+    assert boxer.current_executing_action_group.rotation == [["R", 1]]

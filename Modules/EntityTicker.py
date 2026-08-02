@@ -5,7 +5,7 @@ import threading
 from .EntityUpdater import Tick
 
 CurrentTPS = ReuseFunctions.LoadSetting("Simulations defult TPS")
-print(CurrentTPS)
+print(f"The simulation is running at {CurrentTPS}TPS")
 TimePerTick = 1.0 / CurrentTPS
 next_tick = time.perf_counter()
 
@@ -16,6 +16,12 @@ def UpdateTPS(TPS):
     global CurrentTPS, TimePerTick
     CurrentTPS = TPS
     TimePerTick = 1.0 / CurrentTPS
+
+
+def CheckMatchState():
+    from . import Ring
+    Ring.TickRing()
+
 
 def Pause():
     global Paused
@@ -41,6 +47,7 @@ def Start():
 
         Tick()
         Update()
+        CheckMatchState()
 
         sleep_time = next_tick - time.perf_counter()
         if sleep_time > 0:

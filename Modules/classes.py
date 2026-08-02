@@ -50,7 +50,6 @@ class ActionGroup:
         default_factory=lambda: ["N"] * 6
     )
 
-
 #Just a pair to be stored more simply
 @dataclass
 class StimulationActionPair:
@@ -58,7 +57,6 @@ class StimulationActionPair:
     action: ActionGroup
     points: float
     
-
 #All Stim Act pairs together
 @dataclass
 class Memory:
@@ -70,10 +68,7 @@ class Memory:
     )
 
     def add_memory(self, pair: StimulationActionPair):
-
-        self.stimulation_action_pairs.append(pair)
-
-        if len(self.stimulation_action_pairs) > self.max_action_memory:
+        if len(self.stimulation_action_pairs) >= self.max_action_memory:
             LowestPoints = None
             for index, item in enumerate(self.stimulation_action_pairs):
                 if LowestPoints == None:
@@ -82,12 +77,22 @@ class Memory:
                     if item.points < self.stimulation_action_pairs[LowestPoints].points:
                         LowestPoints = index
             self.stimulation_action_pairs.pop(LowestPoints)
+        
+        self.stimulation_action_pairs.append(pair)
+        self.active_actions = len(self.stimulation_action_pairs)
             
 @dataclass
 class Hand:
     state: Optional[str] = "Idle"
     swing_dis: Optional[float] = 0.0
     swing_speed: Optional[float] = 0.0
+    air_time: int = 0
+    swing_step: int = 0
+    swing_step_distance: float = 0.0
+    hand_speed: List[float] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    mass: Optional[int] = 0
 
     position: List[float] = field(
         default_factory=lambda: [0.0, 0.0]
@@ -105,6 +110,9 @@ class Boxer:
 
     right_hand: Optional[Hand] = None
     left_hand: Optional[Hand] = None
+    hand_air_time: Optional[int] = 0
+    current_hand_air_time_right: int = 0
+    current_hand_air_time_left: int = 0
     max_puntching_distance: Optional[int] = None
     puntching_ierations : Optional[int] = None
     puntching_distance_growth_factor: Optional[int] = None
@@ -129,7 +137,11 @@ class Boxer:
     head_radius: Optional[float] = None
 
     current_executing_action_group: Optional[ActionGroup] = None
-    current_executing_action_group_new_points: Optional[int] = None
+    current_executing_action_group_new_points: Optional[int] = 0
+    pos_before_executing_action_group: Optional[List[float]] = field(
+        default_factory=lambda: [0.0, 0.0]
+    )
+    current_executing_action_group_index: Optional[int] = 0
 
     position: Optional[List[float]] = field(
         default_factory=lambda: [0.0, 0.0]
@@ -150,6 +162,10 @@ class Boxer:
     puntch_stamina_drain: Optional[float] = 0
     stamina_recover_speed: Optional[float] = 0
     mental_clearness_recover_speed: Optional[float] = 0
+
+    stimuli_to_stimuless_max_value: Optional[float] = 0
+    boxer_mass: Optional[int] = 0
+    moment_of_inertia: Optional[float] = 0
 
     def tick(self):
         
@@ -263,41 +279,41 @@ class Boxer:
         self.rotate_body_parts()
 
     def update_hands(self):
-        #Left hand
-        if self.left_hand.state == "Swinging":
-            if self.left_hand.swing_dis == 0:
-                distance = self.max_puntching_distance * (self.puntching_distance_growth_factor - 1) / (self.puntching_distance_growth_factor**self.puntching_ierations - 1)
-                self.left_hand.swing_dis = distance
-            else:
-                distance = self.left_hand.swing_dis * self.puntching_distance_growth_factor
-                self.left_hand.swing_dis = distance
-                
-            if self.left_hand.swing_dis >= self.max_puntching_distance:
-                self.left_hand.swing_dis = self.max_puntching_distance
-                self.left_hand.state = "Returning"
-        if self.left_hand.state == "Returning":
-            self.left_hand.swing_dis -= self.puntching_returning_speed
-            if self.left_hand.swing_dis <= 0:
-                self.left_hand.swing_dis = 0
-                self.left_hand.state = "Idle"
+        def update_hand(hand: Hand):
+            if hand.state == "Swinging":
+                if hand.swing_step == 0:
+                    hand.swing_step_distance = self.max_puntching_distance * (self.puntching_distance_growth_factor - 1) / (
+                        self.puntching_distance_growth_factor**self.puntching_ierations - 1
+                    )
+                    hand.swing_dis += hand.swing_step_distance
+                    hand.swing_step = 1
+                elif hand.swing_step < self.puntching_ierations:
+                    hand.swing_step_distance *= self.puntching_distance_growth_factor
+                    hand.swing_dis += hand.swing_step_distance
+                    hand.swing_step += 1
+                    hand.swing_speed = hand.swing_step_distance * 1.5
+                else:
+                    hand.swing_dis = self.max_puntching_distance
 
-        #Right hand
-        if self.right_hand.state == "Swinging":
-            if self.right_hand.swing_dis == 0:
-                distance = self.max_puntching_distance * (self.puntching_distance_growth_factor - 1) / (self.puntching_distance_growth_factor**self.puntching_ierations - 1)
-                self.right_hand.swing_dis = distance
-            else:
-                distance = self.right_hand.swing_dis * self.puntching_distance_growth_factor
-                self.right_hand.swing_dis = distance
-                
-            if self.right_hand.swing_dis >= self.max_puntching_distance:
-                self.right_hand.swing_dis = self.max_puntching_distance
-                self.right_hand.state = "Returning"
-        if self.right_hand.state == "Returning":
-            self.right_hand.swing_dis -= self.puntching_returning_speed
-            if self.right_hand.swing_dis <= 0:
-                self.right_hand.swing_dis = 0
-                self.right_hand.state = "Idle"
+                if hand.swing_dis >= self.max_puntching_distance:
+                    hand.swing_dis = self.max_puntching_distance
+                    if hand.air_time >= self.hand_air_time:
+                        hand.state = "Returning"
+                        hand.air_time = 0
+                        hand.swing_step = 0
+                        hand.swing_step_distance = 0.0
+                    else:
+                        hand.air_time += 1
+            elif hand.state == "Returning":
+                hand.swing_dis -= self.puntching_returning_speed
+                if hand.swing_dis <= 0:
+                    hand.swing_dis = 0
+                    hand.state = "Idle"
+                    hand.swing_step = 0
+                    hand.swing_step_distance = 0.0
+
+        update_hand(self.left_hand)
+        update_hand(self.right_hand)
 
     def move(self, distance:float, Direction):
         #Figure out the direction first
@@ -407,7 +423,13 @@ class Boxer:
         
         if hand.state == "Idle":
             hand.state = "Swinging"
+            hand.swing_dis = 0.0
+            hand.swing_step = 0
+            hand.swing_step_distance = 0.0
+            hand.air_time = 0
             self.drain_stamina(self.puntch_stamina_drain)
+            # Reduced penalty so AI isn't afraid to punch
+            self.current_executing_action_group_new_points -= 1
 
 @dataclass
 class previous_ring_state:
