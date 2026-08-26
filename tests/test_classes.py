@@ -68,7 +68,7 @@ def test_swing_reaches_full_extension_in_configured_steps():
     assert b.right_hand.swing_dis == 75
     assert b.right_hand.state == "Returning"
 
-
+# Whatever I want
 def test_move_updates_speed():
     b = make_boxer()
     b.rotation = 0
