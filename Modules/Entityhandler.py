@@ -48,6 +48,7 @@ def CreateBoxer(Position, Rotation):
     NewBoxer.boxer_mass = ReuseFunctions.LoadSetting("Boxer mass")
     NewBoxer.moment_of_inertia = ReuseFunctions.LoadSetting("Boxers moment of inertia")
     NewBoxer.hand_air_time = ReuseFunctions.LoadSetting("Hand air time")
+    NewBoxer.round_ticks = ReuseFunctions.LoadSetting("Round time in ticks")
 
     x, y = Position
 

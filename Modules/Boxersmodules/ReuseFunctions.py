@@ -301,8 +301,8 @@ def ResolveHandColition(Hand: Hand, Boxer:Boxer, Collitions, AffectedBoxer: Boxe
             
             #calculate damage:
             damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
-            print(f"Previous Distance:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position)}, Distance:{DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}")
-            print(f" Hit detected, Swing Speed:{Hand.swing_speed}, Distance between last 2 ticks:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}, For damage:{damage/2}")
+            #print(f"Previous Distance:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position)}, Distance:{DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}")
+            #print(f" Hit detected, Swing Speed:{Hand.swing_speed}, Distance between last 2 ticks:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}, For damage:{damage/2}")
             AffectedBoxer.drain_mental(damage/2)
             AffectedBoxer.state = "Knocked"
             AffectedBoxer.current_executing_action_group_new_points -= Hand.swing_speed/2
@@ -331,8 +331,8 @@ def ResolveHandColition(Hand: Hand, Boxer:Boxer, Collitions, AffectedBoxer: Boxe
                     
                     #calculate damage:
                     damage = Hand.swing_speed + (DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position))
-                    print(f"Previous Distance:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position)}, Distance:{DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}")
-                    print(f" Hit detected, Swing Speed:{Hand.swing_speed}, Distance between last 2 ticks:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}, For damage:{damage/2}")
+                    #print(f"Previous Distance:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position)}, Distance:{DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}")
+                    #print(f" Hit detected, Swing Speed:{Hand.swing_speed}, Distance between last 2 ticks:{DistanceCheckCircles(PreviousPosition, AffectedBoxer.position) - DistanceCheckCircles(CurrentPosition, AffectedBoxer.position)}, For damage:{damage/2}")
                     AffectedBoxer.drain_stamina(damage/2)
                     AffectedBoxer.state = "Knocked"
                     AffectedBoxer.current_executing_action_group_new_points -= Hand.swing_speed/2

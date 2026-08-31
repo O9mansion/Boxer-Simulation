@@ -3,10 +3,12 @@ import Modules.classes as Classes
 import Modules.Entityhandler as EntityHandler
 import math
 import time
+import Modules.EntityTicker as EntityTicker
 
 root = None
 canvas = None
 running = False
+debug = False
 
 XSize, YSize = [0,0]
 Persentage = 105
@@ -15,6 +17,44 @@ def DrawStats(
         
 ):
     pass
+
+def DebugView(canvas):
+    global debug, XSize, YSize
+
+    if debug:
+        canvas.create_rectangle(
+            0,
+            0,
+            (XSize / 390) * 100,
+            YSize,
+            fill="#aa9c5e",
+            outline=""
+        )
+        canvas.create_rectangle(
+            0,
+            0,
+            (XSize / 400) * 100,
+            YSize,
+            fill="#eeefd1",
+            outline=""
+        )
+
+def on_key_press(event):
+    global debug
+    if event.keysym == "m":
+        debug = not debug
+        print(debug)
+    elif event.keysym == "p":
+        print("X2 simulations TPS")
+        NewTPS = EntityTicker.CurrentTPS * 2
+        EntityTicker.UpdateTPS(NewTPS)
+        print(f'Current TPS{EntityTicker.CurrentTPS}')
+    elif event.keysym == "o":
+        print("/2 simulations TPS")
+        NewTPS = EntityTicker.CurrentTPS / 2
+        EntityTicker.UpdateTPS(NewTPS)
+        print(f'Current TPS{EntityTicker.CurrentTPS}')
+
 
 def StartingCondidtions(WorldSize):
     global root, canvas, running
@@ -25,6 +65,9 @@ def StartingCondidtions(WorldSize):
     root = tk.Tk()
     root.title("Simulation")
     running = True
+
+    root.bind("<KeyPress>", on_key_press)
+    root.focus_set()
 
     canvas = tk.Canvas(
         root,
@@ -255,6 +298,8 @@ def Update():
     # Schedule next frame
     root.after(16, Update)  # ~60 FPS
 
+    DebugView(canvas)
+
 def Start(WorldSize, duration_ms=None):
     global root, XSize, YSize
     XSize, YSize = WorldSize
@@ -276,6 +321,7 @@ def RunScene(WorldSize, frames=20, step_fn=None, delay_seconds=0.03):
                 step_fn()
 
             Update()
+            DebugView()
 
             if root is not None:
                 root.update_idletasks()
