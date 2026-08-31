@@ -5,7 +5,7 @@
     "Max boxer rotation speed" : 15,
     "Boxer friction": 2,
     "Boxer collition loss": 1.65,
-    "Simulations defult TPS": 400,
+    "Simulations defult TPS": 20,
     "Max puntching distance": 75,
     "Puntching iterations": 5,
     "Puntching growth factor": 2,
@@ -20,5 +20,6 @@
     "Boxer mass" : 80,
     "Boxers moment of inertia": 3000.0,
     "Hand mass": 15,
-    "Hand air time" : 2
+    "Hand air time" : 2,
+    "Round time in ticks" : 200
 }

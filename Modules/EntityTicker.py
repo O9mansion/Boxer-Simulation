@@ -17,11 +17,9 @@ def UpdateTPS(TPS):
     CurrentTPS = TPS
     TimePerTick = 1.0 / CurrentTPS
 
-
 def CheckMatchState():
     from . import Ring
     Ring.TickRing()
-
 
 def Pause():
     global Paused

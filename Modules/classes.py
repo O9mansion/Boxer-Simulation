@@ -29,7 +29,6 @@ class Stimulation:
     closing_speed: float = 0
     flipped: bool = False
 
-
 RotationDirection = Literal["L", "R"]
 MovementDirection = Literal["F", "B", "L", "R"]
 AttackDirection = Literal["L", "R", "N"]
@@ -167,6 +166,10 @@ class Boxer:
     boxer_mass: Optional[int] = 0
     moment_of_inertia: Optional[float] = 0
 
+    #Round times
+    round_ticks: Optional[float] = 0
+    current_round_ticks: Optional[float] = 0
+
     def tick(self):
         
         if self.state == "Fighting":
@@ -190,6 +193,16 @@ class Boxer:
         
         self.update_postion()
         self.update_hands()
+
+        #Make sure we dont go over time.
+        if self.current_round_ticks >= self.round_ticks:
+            self.state = "PassedOut"
+
+        #Make sure memory is Not at 0.
+        for Mem in self.memory.stimulation_action_pairs:
+            SelectedMem: StimulationActionPair = Mem
+            if SelectedMem.points <= 0:
+                self.memory.stimulation_action_pairs.remove(SelectedMem)
 
     def rotate_body_parts(self):
         x, y = self.position
